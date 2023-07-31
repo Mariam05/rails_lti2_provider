@@ -59,15 +59,11 @@ module RailsLti2Provider
     end
 
     def security_contract
-      if @security_contract
-        @security_contract
-      else
-        @security_contract = if @tool_consumer_profile.capabilities_offered.include?('OAuth.splitSecret')
-                               IMS::LTI::Models::SecurityContract.new(tp_half_shared_secret: shared_secret)
-                             else
-                               IMS::LTI::Models::SecurityContract.new(shared_secret: shared_secret)
-                             end
-      end
+      @security_contract || @security_contract = if @tool_consumer_profile.capabilities_offered.include?('OAuth.splitSecret')
+                                                   IMS::LTI::Models::SecurityContract.new(tp_half_shared_secret: shared_secret)
+                                                 else
+                                                   IMS::LTI::Models::SecurityContract.new(shared_secret: shared_secret)
+                                                 end
     end
 
     def self.register(registration, controller)
